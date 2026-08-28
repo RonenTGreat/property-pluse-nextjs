@@ -13,7 +13,7 @@ export const GET = async (request, { params }) => {
       });
     }
 
-    return new Response(property, {
+    return new Response(JSON.stringify(property), {
       status: 200,
     });
   } catch (error) {

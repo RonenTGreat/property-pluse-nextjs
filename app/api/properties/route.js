@@ -3,15 +3,14 @@ import Property from "@/models/Property";
 
 export const GET = async () => {
   try {
+    await connectDB();
 
-   await connectDB()
+    const properties = await Property.find({});
 
-   const properties = await Property.find({});
-
-    return new Response(properties, {
+    return new Response(JSON.stringify(properties), {
       status: 200,
     });
   } catch (error) {
-    return new Response('Something went wrong', {status: 500})
+    return new Response("Something went wrong", { status: 500 });
   }
 };
