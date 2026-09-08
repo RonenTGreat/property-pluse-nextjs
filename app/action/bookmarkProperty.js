@@ -16,7 +16,7 @@ async function bookmarkProperty(propertyId) {
 
   const user = await User.findById(userId);
 
-  const isBookmarked = user.bookmarks.inlcudes(propertyId);
+  let isBookmarked = user.bookmarks.includes(propertyId);
 
   let message;
 
@@ -27,18 +27,18 @@ async function bookmarkProperty(propertyId) {
     isBookmarked = false;
   } else {
     // If not bookmarked, then add
-    user.bookmarks.pull(propertyId);
+    user.bookmarks.push(propertyId);
     message = "Bookmark Added";
     isBookmarked = true;
   }
 
   await user.save();
-  revalidatePath('/properties/saved', 'page')
+  revalidatePath("/properties/saved", "page");
 
   return {
     message,
-    isBookmarked
-  }
+    isBookmarked,
+  };
 }
 
 export default bookmarkProperty;
