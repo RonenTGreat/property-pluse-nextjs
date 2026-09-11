@@ -4,6 +4,8 @@ import User from "@/models/User";
 import { getSessionUser } from "@/utils/getSessionUser";
 
 async function checkBookmarkStatus(propertyId) {
+  await connectDB();
+
   const sessionUser = await getSessionUser();
 
   if (!sessionUser || !sessionUser.userId) {
@@ -15,7 +17,7 @@ async function checkBookmarkStatus(propertyId) {
 
   let isBookmarked = user.bookmarks.includes(propertyId);
 
-  return {isBookmarked};
+  return { isBookmarked };
 }
 
 export default checkBookmarkStatus;
