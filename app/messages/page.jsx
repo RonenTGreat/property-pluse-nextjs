@@ -6,9 +6,23 @@ import { getSessionUser } from "@/utils/getSessionUser";
 import MessageCard from "@/components/MessageCard";
 
 const MessagesPages = async () => {
-  connectDB();
+  await connectDB();
 
   const sessionUser = await getSessionUser();
+
+  if (!sessionUser || !sessionUser.userId) {
+    return (
+      <section className="bg-blue-50">
+        <div className="container m-auto py-24 max-w-6xl">
+          <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
+            <h1 className="text-3xl font-bold mb-4">Your Messages</h1>
+            <p className="text-gray-600">You must be logged in to view your messages.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   const { userId } = sessionUser;
 
   const readMessages = await Message.find({
@@ -33,24 +47,28 @@ const MessagesPages = async () => {
     const message = convertToSerializableObject(messageDoc);
     message.sender = convertToSerializableObject(messageDoc.sender);
     message.property = convertToSerializableObject(messageDoc.property);
-    return message
-});
+    return message;
+  });
 
-  return <section className="bg-blue-50">
-    <div className="container m-auto py-24 mex-w-6xl">
+  return (
+    <section className="bg-blue-50">
+      <div className="container m-auto py-24 max-w-6xl">
         <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
-            <h1 className="text-3xl font-bold mb-4">Your Message</h1>
+          <h1 className="text-3xl font-bold mb-4">Your Messages</h1>
 
-            <div className="space-y-4">
-                {messages.length === 0 ? (<p>You have no messages</p>) : (
-                    messages.map((message) => (
-                        <MessageCard key={message._id} message={message} />
-                    ))
-                )}
-            </div>
+          <div className="space-y-4">
+            {messages.length === 0 ? (
+              <p>You have no messages</p>
+            ) : (
+              messages.map((message) => (
+                <MessageCard key={message._id} message={message} />
+              ))
+            )}
+          </div>
         </div>
-    </div>
-  </section>;
+      </div>
+    </section>
+  );
 };
 
 export default MessagesPages;

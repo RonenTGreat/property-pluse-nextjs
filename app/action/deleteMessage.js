@@ -6,6 +6,8 @@ import { getSessionUser } from "@/utils/getSessionUser";
 import { revalidatePath } from "next/cache";
 
 async function deleteMessage(messageId) {
+  await connectDB();
+
   const sessionUser = await getSessionUser();
 
   if (!sessionUser || !sessionUser.userId) {
@@ -16,8 +18,12 @@ async function deleteMessage(messageId) {
 
   const message = await Message.findById(messageId);
 
-  if(message.recipient.toString() !== userId){
-    throw new Error('Unauthorized')
+  if (!message) {
+    throw new Error("Message not found");
+  }
+
+  if (message.recipient.toString() !== userId) {
+    throw new Error("Unauthorized");
   }
 
   await message.deleteOne();

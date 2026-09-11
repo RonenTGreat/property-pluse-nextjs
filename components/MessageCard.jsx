@@ -21,7 +21,7 @@ const MessageCard = ({ message }) => {
   const handleDeleteClick = async () => {
     await deleteMessage(message._id);
     setIsDeleted(true);
-    setUnreadCount((prevCount) => (IsRead ? prevCount : prevCount - 1));
+    setUnreadCount((prevCount) => (isRead ? prevCount : prevCount - 1));
 
     toast.success("Message Deleted");
   };
@@ -31,7 +31,7 @@ const MessageCard = ({ message }) => {
   }
 
   return (
-    <div className="relative bg-white p-4 rounded-md shadow-md border border-gray-200200">
+    <div className="relative bg-white p-4 rounded-md shadow-md border border-gray-200">
       {!isRead && (
         <div className="absolute top-2 right-2 bg-yellow-500 text-white px-2 py-1 rounded-md ">
           New
@@ -39,24 +39,28 @@ const MessageCard = ({ message }) => {
       )}
       <h2 className="text-xl mb-4">
         <span className="font-bold">Property Inquiry:</span>{" "}
-        {message.property.name}
+        {message.property?.name || "Property Deleted or Unavailable"}
       </h2>
       <p className="text-gray-700">{message.body}</p>
       <ul className="mt-3">
         <li>
-          <strong>Reply Email</strong>{" "}
+          <strong>Reply Email:</strong>{" "}
           <a href={`mailto:${message.email}`} className="text-blue-500">
             {message.email}
           </a>
         </li>
         <li>
-          <strong>Reply Phone</strong>{" "}
-          <a href={`tel:${message.phone}`} className="text-blue-500">
-            {message.phone}
-          </a>
+          <strong>Reply Phone:</strong>{" "}
+          {message.phone ? (
+            <a href={`tel:${message.phone}`} className="text-blue-500">
+              {message.phone}
+            </a>
+          ) : (
+            "N/A"
+          )}
         </li>
         <li>
-          <strong>Recieved</strong>{" "}
+          <strong>Received:</strong>{" "}
           {new Date(message.createdAt).toLocaleString()}
         </li>
       </ul>
@@ -69,7 +73,7 @@ const MessageCard = ({ message }) => {
 
       <button
         onClick={handleDeleteClick}
-        className="mt-4 bg-red-500 white py-1 px-3 rounded-md"
+        className="mt-4 bg-red-500 text-white py-1 px-3 rounded-md"
       >
         Delete
       </button>

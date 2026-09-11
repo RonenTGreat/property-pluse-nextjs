@@ -4,9 +4,23 @@ import User from "@/models/User";
 import { getSessionUser } from "@/utils/getSessionUser";
 
 const SavedPropertiesPage = async () => {
-  const { userId } = await getSessionUser();
+  await connectDB();
+  const sessionUser = await getSessionUser();
 
-  const { bookmarks } = await User.findById(userId).populate("bookmarks");
+  if (!sessionUser || !sessionUser.userId) {
+    return (
+      <section className="px-4 py-6">
+        <div className="container lg:container m-auto px-4 py-6">
+          <h1 className="text-2xl mb-4">Saved Properties</h1>
+          <p className="text-gray-600">You must be logged in to view saved properties.</p>
+        </div>
+      </section>
+    );
+  }
+
+  const { userId } = sessionUser;
+  const user = await User.findById(userId).populate("bookmarks");
+  const bookmarks = (user?.bookmarks || []).filter(Boolean);
 
   return (
     <section className="px-4 py-6">

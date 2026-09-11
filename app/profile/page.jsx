@@ -11,11 +11,21 @@ const ProfilePage = async () => {
   await connectDB();
 
   const sessionUser = await getSessionUser();
-  const { userId } = sessionUser;
 
-  if (!userId) {
-    throw new Error("User ID is required");
+  if (!sessionUser || !sessionUser.userId) {
+    return (
+      <section className="bg-blue-50">
+        <div className="container m-auto py-24">
+          <div className="bg-white px-6 py-8 mb-4 shadow-md rounded-md border m-4 md:m-0">
+            <h1 className="text-3xl font-bold mb-4">Your Profile</h1>
+            <p className="text-gray-600">You must be logged in to view your profile.</p>
+          </div>
+        </div>
+      </section>
+    );
   }
+
+  const { userId } = sessionUser;
 
   const propertiesDocs = await Property.find({ owner: userId }).lean();
   const properties = propertiesDocs.map(convertToSerializableObject)
